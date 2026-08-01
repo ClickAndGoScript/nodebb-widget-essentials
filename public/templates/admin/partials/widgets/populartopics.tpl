@@ -1,4 +1,9 @@
 <div class="mb-3">
+	<label class="form-label">Category:</label>
+	<input type="text" class="form-control" name="cid" placeholder="0" />
+	<p class="form-text">Set the category IDs you want to display this widget on (separated by commas)</p>
+</div>
+<div class="mb-3">
 	<label class="form-label">Amount of Topics to display:</label>
 	<input type="text" class="form-control" name="numTopics" placeholder="8" />
 </div>

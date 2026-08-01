@@ -351,8 +351,17 @@ Widget.renderPopularTags = async function (widget) {
 
 Widget.renderPopularTopics = async function (widget) {
 	const numTopics = widget.data.numTopics || 8;
+	let cids = getValuesArray(widget, 'cid');
+	if (!cids.length) {
+		if (widget.templateData.template.category && widget.templateData.cid) {
+			cids = [widget.templateData.cid];
+		} else {
+			cids = await categories.getCidsByPrivilege('categories:cid', widget.uid, 'topics:read');
+			cids = cids.filter(cid => cid !== -1);
+		}
+	}
 	const data = await topics.getSortedTopics({
-		cids: widget.templateData.template.category && widget.templateData.cid,
+		cids: cids,
 		uid: widget.uid,
 		start: 0,
 		stop: numTopics - 1,
