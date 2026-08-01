@@ -20,7 +20,7 @@
 				<div class="post-author d-flex align-items-center gap-1">
 					<a class="lh-1 fw-semibold text-nowrap" href="{relative_path}/user/{./teaser.user.userslug}">{./teaser.user.displayname}</a>
 				</div>
-				<span class="timeago text-muted lh-1 text-nowrap" title="{./teaser.timestampISO}"></span>
+				<span class="timeago text-muted lh-1 text-nowrap text-truncate" title="{./teaser.timestampISO}"></span>
 			</div>
 
 			<div class="d-flex justify-content-between">
