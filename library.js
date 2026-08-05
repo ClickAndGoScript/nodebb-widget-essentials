@@ -150,14 +150,17 @@ Widget.renderOnlineUsersWidget = async function (widget) {
 
 Widget.renderActiveUsersWidget = async function (widget) {
 	const count = Math.max(1, widget.data.numUsers || 24);
-	const cids = getValuesArray(widget, 'cid');
+	let cids = getValuesArray(widget, 'cid');
 	let uids;
-	if (cids.length) {
-		uids = await categories.getActiveUsers(cids);
-	} else if (widget.templateData.template.topic) {
-		uids = await topics.getUids(widget.templateData.tid);
+	if (widget.templateData.template.topic) {
+		const canRead = await privileges.topics.can('topics:read', widget.templateData.tid, widget.uid);
+		uids = canRead ? await topics.getUids(widget.templateData.tid) : [];
 	} else {
-		uids = await posts.getRecentPosterUids(0, count - 1);
+		cids = cids.length ?
+			await privileges.categories.filterCids('topics:read', cids, widget.uid) :
+			await categories.getCidsByPrivilege('categories:cid', widget.uid, 'topics:read');
+		cids = cids.filter(cid => cid !== -1);
+		uids = await categories.getActiveUsers(cids);
 	}
 	uids = uids.slice(0, count);
 
