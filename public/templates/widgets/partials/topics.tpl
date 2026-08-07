@@ -13,12 +13,12 @@
 
 		<div class="d-flex flex-column gap-2 flex-grow-1">
 			<div class="d-flex gap-2 align-items-center text-sm">
-				<a class="text-decoration-none avatar-tooltip" title="{./user.displayname}" href="{{{ if ./teaser.user.userslug }}}{relative_path}/user/{./teaser.user.userslug}{{{ else }}}#{{{ end }}}">
+				<a class="text-decoration-none avatar-tooltip" title="{{txDisplayname(./user)}}" href="{{{ if ./teaser.user.userslug }}}{relative_path}/user/{./teaser.user.userslug}{{{ else }}}#{{{ end }}}">
 					{{buildAvatar(./teaser.user, "24px", true)}}
 				</a>
 
 				<div class="post-author d-flex align-items-center gap-1">
-					<a class="lh-1 fw-semibold text-nowrap" href="{relative_path}/user/{./teaser.user.userslug}">{./teaser.user.displayname}</a>
+					<a class="lh-1 fw-semibold text-nowrap" href="{relative_path}/user/{./teaser.user.userslug}">{{txDisplayname(./teaser.user)}}</a>
 				</div>
 				<span class="timeago text-muted lh-1 text-nowrap text-truncate" title="{./teaser.timestampISO}"></span>
 			</div>
