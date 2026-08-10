@@ -38,7 +38,7 @@ Widget.renderHTMLWidget = async function (widget) {
 	}
 	const tpl = widget.data ? widget.data.html : '';
 	widget.html = await benchpressjs.compileRender(String(tpl), {
-		_i18n: widget.res.locals._i18n,
+		_i18n: widget?.res?.locals?._i18n,
 		...widget.templateData,
 	});
 	return widget;
