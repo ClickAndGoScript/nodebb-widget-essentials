@@ -1,66 +1,69 @@
 <nav>
 	<div class="theme-switch-wrapper d-flex align-self-center">
-		<label class="theme-switch position-relative d-inline-block" for="checkbox" style="width: 55px; height: 26px;">
-			<input type="checkbox" id="checkbox" class="d-none" />
-			<div class="slider pointer position-absolute rounded-pill top-0 bottom-0 start-0 end-0" style="outline: 1px solid var(--bs-border-color);">
-				<div class="h-100 moon-sun p-1 d-flex align-items-center justify-content-between">
-					<i class="fa-solid fa-moon text-white"></i>
-					<i class="fa-solid fa-sun text-warning"></i>
-				</div>
-			</div>
-		</label>
+		<button type="button" class="theme-switch position-relative d-flex align-items-center justify-content-center rounded-circle border-0" style="width: 36px; height: 36px;" aria-label="Toggle theme">
+			<i class="fa-solid fa-sun theme-icon theme-icon-light"></i>
+			<i class="fa-solid fa-moon theme-icon theme-icon-dark"></i>
+			<i class="fa-solid fa-desktop theme-icon theme-icon-system"></i>
+		</button>
 	</div>
 <style>
-.theme-switch .slider { background-color: var(--bs-body-bg); transition: .4s; }
-.theme-switch .moon-sun i {  transition: opacity .15s ease; }
-.theme-switch .slider.hide-moon .fa-moon, .theme-switch .slider.hide-sun .fa-sun { opacity: 0; }
-.theme-switch .slider:before {
-  background-color: #1b73f9;
-  bottom: 3px;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  position: absolute;
-  transition: .4s;
-  border-radius: 50px;
-  z-index: 1;
+.theme-switch {
+	background-color: var(--bs-tertiary-bg, var(--bs-secondary-bg));
+	color: var(--bs-body-color);
+	outline: 1px solid var(--bs-border-color);
+	transition: background-color .2s ease, transform .1s ease;
 }
-.theme-switch input:checked + .slider { background-color: var(--bs-body-bg); }
-.theme-switch input:checked + .slider:before { transform: translateX(28px); }
+.theme-switch:hover { background-color: var(--bs-secondary-bg); }
+.theme-switch:active { transform: scale(0.92); }
+.theme-switch .theme-icon {
+	position: absolute;
+	opacity: 0;
+	transform: scale(.6) rotate(-30deg);
+	transition: opacity .15s ease, transform .15s ease;
+	pointer-events: none;
+}
+.theme-switch .theme-icon-light { color: var(--bs-warning, #f0ad4e); }
+.theme-switch .theme-icon-dark { color: #1b73f9; }
+.theme-switch .theme-icon-system { color: var(--bs-body-color); }
+.theme-switch[data-mode="light"] .theme-icon-light,
+.theme-switch[data-mode="dark"] .theme-icon-dark,
+.theme-switch[data-mode="system"] .theme-icon-system {
+	opacity: 1;
+	transform: scale(1) rotate(0deg);
+}
 </style>
 <script>
 (function() {
-	const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-	const slider = document.querySelector('.theme-switch .slider');
-	const currentTheme = localStorage.getItem('theme');
+	const button = document.querySelector('.theme-switch');
+	const modes = ['light', 'dark', 'system'];
+	const media = window.matchMedia('(prefers-color-scheme: dark)');
 
-	function syncThemeIcons(theme) {
-		slider.classList.toggle('hide-moon', theme === 'light');
-		slider.classList.toggle('hide-sun', theme === 'dark');
+	function resolveTheme(mode) {
+		return mode === 'system' ? (media.matches ? 'dark' : 'light') : mode;
 	}
 
-	if (currentTheme) {
-		document.documentElement.setAttribute('data-bs-theme', currentTheme);
-		if (currentTheme === 'dark') {
-			toggleSwitch.checked = true;
-		}
+	function applyMode(mode) {
+		button.setAttribute('data-mode', mode);
+		document.documentElement.setAttribute('data-bs-theme', resolveTheme(mode));
 	}
 
-	syncThemeIcons(toggleSwitch.checked ? 'dark' : 'light');
+	let currentMode = localStorage.getItem('theme');
+	if (!modes.includes(currentMode)) {
+		currentMode = 'system';
+	}
+	applyMode(currentMode);
 
-	slider.addEventListener('transitionend', function (e) {
-		if (e.propertyName === 'background-color') {
-			syncThemeIcons(toggleSwitch.checked ? 'dark' : 'light');
+	media.addEventListener('change', () => {
+		if (currentMode === 'system') {
+			applyMode(currentMode);
 		}
 	});
 
-	toggleSwitch.addEventListener('change', (e) => {
-		const theme = e.target.checked ? 'dark' : 'light';
-		document.documentElement.setAttribute('data-bs-theme', theme);
-		localStorage.setItem('theme', theme);
-		slider.classList.remove('hide-moon', 'hide-sun');
-	}, false);
+	button.addEventListener('click', () => {
+		currentMode = modes[(modes.indexOf(currentMode) + 1) % modes.length];
+		localStorage.setItem('theme', currentMode);
+		applyMode(currentMode);
+	});
 })();
 </script>
 </nav>
